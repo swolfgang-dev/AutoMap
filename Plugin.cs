@@ -16,7 +16,7 @@ namespace AutoMap
     {
         public const string PluginGuid = "whereswolfgang.automap";
         public const string PluginName = "AutoMap";
-        public const string PluginVersion = "1.0.0";
+        public const string PluginVersion = "1.0.1";
 
         private static readonly Harmony Harmony = new Harmony(PluginGuid);
         private static readonly MethodInfo GameMapIsSceneMappableMethod = AccessTools.Method(typeof(GameMap), "IsSceneMappable");
@@ -220,9 +220,15 @@ namespace AutoMap
             if (gameManager != null)
             {
                 QuillStateState state = ApplyVirtualQuillIfNeeded();
-                PrimeCurrentSceneForMapUpdate(gameManager);
-                gameManager.UpdateGameMap();
-                RestoreVirtualQuill(state);
+                try
+                {
+                    PrimeCurrentSceneForMapUpdate(gameManager);
+                    gameManager.UpdateGameMap();
+                }
+                finally
+                {
+                    RestoreVirtualQuill(state);
+                }
             }
         }
 
@@ -662,7 +668,7 @@ namespace AutoMap
 
         private static bool HasVisitedSceneInZone(GameMap gameMap, MapZone mapZone)
         {
-            if (Instance == null || !Instance.ShouldAutoUpdateSceneMaps())
+            if (Instance == null || !Instance.ShouldBypassAreaMapRequirementForAutoMap())
             {
                 return false;
             }
@@ -889,6 +895,15 @@ namespace AutoMap
             {
                 RestoreVirtualQuillOnly(__state);
             }
+
+            private static void Finalizer(System.Exception __exception, VirtualState __state)
+            {
+                if (__exception != null)
+                {
+                    RestoreVirtualQuillOnly(__state);
+                    RestoreActiveQuickMapRegionMap();
+                }
+            }
         }
 
         [HarmonyPatch(typeof(GameMap), "CloseQuickMap")]
@@ -1059,7 +1074,7 @@ namespace AutoMap
                 }
 
                 bool currentReveal = Instance.ShouldAutoUnlockAreaMaps() && IsParentForCurrentMapZone(__instance);
-                bool visitedReveal = Instance.ShouldAutoUpdateSceneMaps() && ParentHasVisitedScene(__instance);
+                bool visitedReveal = Instance.ShouldBypassAreaMapRequirementForAutoMap() && ParentHasVisitedScene(__instance);
                 if (currentReveal || visitedReveal)
                 {
                     __result = true;

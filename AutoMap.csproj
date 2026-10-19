@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <GameDir Condition="'$(GameDir)' == ''">$(MSBuildThisFileDirectory)../..</GameDir>
     <TargetFramework>netstandard2.1</TargetFramework>
     <AssemblyName>AutoMap</AssemblyName>
     <RootNamespace>AutoMap</RootNamespace>
@@ -7,35 +8,35 @@
     <Nullable>disable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
-    <InformationalVersion>1.0.0</InformationalVersion>
+    <AssemblyVersion>1.0.1.0</AssemblyVersion>
+    <FileVersion>1.0.1.0</FileVersion>
+    <InformationalVersion>1.0.1</InformationalVersion>
     <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <ItemGroup>
     <Reference Include="0Harmony">
-      <HintPath>..\..\BepInEx\core\0Harmony.dll</HintPath>
+      <HintPath>$(GameDir)/BepInEx/core/0Harmony.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="BepInEx">
-      <HintPath>..\..\BepInEx\core\BepInEx.dll</HintPath>
+      <HintPath>$(GameDir)/BepInEx/core/BepInEx.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\Hollow Knight Silksong_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>$(GameDir)/Hollow Knight Silksong_Data/Managed/Assembly-CSharp.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\Hollow Knight Silksong_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>$(GameDir)/Hollow Knight Silksong_Data/Managed/UnityEngine.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\..\Hollow Knight Silksong_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>$(GameDir)/Hollow Knight Silksong_Data/Managed/UnityEngine.CoreModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="SaveScopedConfig">
-      <HintPath>..\..\BepInEx\plugins\SaveScopedConfig\SaveScopedConfig.dll</HintPath>
+      <HintPath>$(GameDir)/BepInEx/plugins/SaveScopedConfig/SaveScopedConfig.dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>
