@@ -5,7 +5,8 @@ AutoMap is a BepInEx/Harmony mod for Hollow Knight: Silksong that can keep the c
 ## Requirements
 
 - BepInEx 5
-- Save Scoped Config
+- Save Scoped Config 0.4.0 or newer
+- Configuration Manager recommended
 
 ## Config
 
@@ -20,22 +21,20 @@ Global settings apply to every save and are disabled by default. Save-specific s
 
 Auto Map Scene is intended to reveal mapped scene detail without setting the normal purchased-map progression flags.
 
-## Build
+The `Controls and Status` panel explains whether scene mapping or rough reveal is enabled globally or for this save, and whether a missing quill, region map, or unsupported scene prevents mapping. Status inspection does not grant items or purchased-map progression.
 
-From the game directory:
+Startup checks report missing game APIs and roll back this mod's patches if patching fails.
 
-```powershell
-powershell.exe -ExecutionPolicy Bypass -File .\ModDev\AutoMap\build.ps1
+## Build and package
+
+Requires the .NET 8 SDK and a local Silksong installation with BepInEx 5. Run from this repository:
+
+```sh
+python3 build.py --game-dir "/path/to/Hollow Knight Silksong"
+python3 build.py --game-dir "/path/to/Hollow Knight Silksong" --package
 ```
 
-The default build target is development mode:
+`SILKSONG_GAME_DIR` can supply the game directory. Use `--dotnet /path/to/dotnet` for a local SDK. Use `--save-scoped-dll /path/to/SaveScopedConfig.dll` when building against a newer helper than the installed copy.
+Builds go to `bin/Release/netstandard2.1`. Packaging writes `dist/AutoMap-<version>.zip` with the plugin, README, and SHA-256 checksum; it includes no game assemblies. `--check` validates version metadata without building. Identical inputs produce identical package contents and timestamps. Release metadata excludes Git revision suffixes so checked-in binaries do not identify an earlier source commit.
 
-```text
-BepInEx/scripts/AutoMap.dll
-```
-
-For a normal BepInEx plugin install:
-
-```powershell
-powershell.exe -ExecutionPolicy Bypass -File .\ModDev\AutoMap\build.ps1 -Target Plugin
-```
+Builds do not deploy by default. Install the DLL under `BepInEx/plugins/AutoMap/` after closing the game. On Windows, `build.ps1 -GameDir "C:\path\to\game"` also builds locally; explicit `-Target Plugin` deploys a plugin and `-Target Dev` deploys for ScriptEngine. Do not install both copies.

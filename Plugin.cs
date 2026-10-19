@@ -11,12 +11,12 @@ using WheresWolfgang.SaveScopedConfig;
 namespace AutoMap
 {
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
-    [BepInDependency(SaveScopedConfigPlugin.PluginGuid)]
-    public sealed class Plugin : BaseUnityPlugin
+    [BepInDependency(SaveScopedConfigPlugin.PluginGuid, "0.4.0")]
+    public sealed partial class Plugin : BaseUnityPlugin
     {
         public const string PluginGuid = "whereswolfgang.automap";
         public const string PluginName = "AutoMap";
-        public const string PluginVersion = "1.0.1";
+        public const string PluginVersion = "1.1.0";
 
         private static readonly Harmony Harmony = new Harmony(PluginGuid);
         private static readonly MethodInfo GameMapIsSceneMappableMethod = AccessTools.Method(typeof(GameMap), "IsSceneMappable");
@@ -64,7 +64,13 @@ namespace AutoMap
             RemoveObsoleteConfigEntries();
             BindConfig();
 
-            Harmony.PatchAll(typeof(Plugin).Assembly);
+            ModSettingsUi.BindPanel(Config, "Mapping Status", () =>
+            {
+                ModSettingsUi.Label(compatibilityStatus);
+                ModSettingsUi.Label(GetMappingStatus());
+            }, "Explains mapping settings and missing prerequisites for the active scene.");
+            ModCompatibility.TryPatch(Harmony, typeof(Plugin).Assembly, Logger, out compatibilityStatus,
+                GameMapIsSceneMappableMethod, GameMapCurrentSceneField, GameMapSceneSpriteRendererField);
             Logger.LogInfo(PluginName + " loaded.");
         }
 

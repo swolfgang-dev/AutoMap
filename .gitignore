@@ -13,3 +13,6 @@ obj/
 .vs/
 .idea/
 .vscode/
+
+# Reproducible local release packages
+dist/*.zip
